@@ -1,0 +1,223 @@
+The solution to this problem is fairly simple
+All this project does at the moment is extend/instantiate concrete classes while holding onto the same
+types of methods and repeating them throughout
+
+We can cut down on these things by creating an interface to hold onto the common behaviour
+
+Step 1 - extracting the interface for the absolute operations
+Then we change each of the files to implement this method & perform their own operation
+
+interface DoubleOperation {
+    double process(double value);
+}
+
+This one replaces the original Absolute file:
+class AbsoluteOperation implements DoubleOperation {
+    private final double threshold;
+    
+    public AbsoluteOperation(double threshold) {
+        this.threshold = threshold;
+    }
+    
+    @Override
+    public double process(double value) {
+        System.out.println("AbsoluteOperation: processing " + value);
+        return value >= threshold ? Math.abs(value) : value;
+    }
+}
+
+The actual absolute log operation class uses composition - composition is better since it's "looser coupling"
+Absolute value, then logarithm
+Uses COMPOSITION instead of inheritance
+
+We change the constructor to be able to initialise/instantiate the DoubleOperation interface - this is the dependency injection we spoke about
+We've seen/used this dependency injection in the other examples - not depending on a concrete class 
+We then still implement the method from our interface & then use both the log operation 
+Does the same stuff as before, just in a different way
+class AbsoluteLogOperation implements DoubleOperation {
+    private final DoubleOperation absoluteOp;
+    private final LogOperation logOp;
+    
+    public AbsoluteLogOperation(double threshold, double logBase) {
+        this.absoluteOp = new AbsoluteOperation(threshold);
+        this.logOp = new LogOperation(logBase);
+    }
+    
+    @Override
+    public double process(double value) {
+        System.out.println("AbsoluteLogOperation: processing " + value);
+        double absValue = absoluteOp.process(value);
+        return logOp.process(absValue);
+    }
+}
+
+This is the exact same as the LogBase Class - just named differently - now it also implements the interface
+class LogOperation implements DoubleOperation {
+    private final double baseLog;
+    
+    public LogOperation(double base) {
+        this.baseLog = Math.log10(base);
+        System.out.println("LogOperation created with base: " + base);
+    }
+    
+    @Override
+    public double process(double value) {
+        return Math.log10(value) / baseLog;
+    }
+}
+
+Similar refactored class - just implementing the interface
+A lot of these classes do the same things where they implement the interface, use dependency injection to get access to the "Absolute" classes process method
+This way we avoid depending on the class itself
+class AbsoluteReverseOperation implements DoubleOperation {
+    private final DoubleOperation absoluteOp;
+    
+    public AbsoluteReverseOperation(double threshold) {
+        this.absoluteOp = new AbsoluteOperation(threshold);
+    }
+    
+    @Override
+    public double process(double value) {
+        System.out.println("AbsoluteReverseOperation: processing " + value);
+        double absValue = absoluteOp.process(value);
+        long bits = Double.doubleToLongBits(absValue);
+        return Long.reverse(bits);
+    }
+}
+
+/**
+ * Absolute value, log, then flip bits
+ */
+class AbsoluteLogBitFlipOperation implements DoubleOperation {
+    private final DoubleOperation absLogOp;
+    
+    public AbsoluteLogBitFlipOperation(double threshold, double logBase) {
+        this.absLogOp = new AbsoluteLogOperation(threshold, logBase);
+    }
+    
+    @Override
+    public double process(double value) {
+        System.out.println("AbsoluteLogBitFlipOperation: processing " + value);
+        double result = absLogOp.process(value);
+        long bits = Double.doubleToLongBits(result);
+        return ~bits; // Flip bits
+    }
+}
+
+FACTORIES IMPLEMENTATION
+Our main class for this program the class that actively calls & uses the various operations 
+It has weird separate methods for calling the various classes - something better to do would be create a factory
+Not only does it make the actual operation of the absolute stuff better 
+It also makes things easier/better for the main class as we dont rely on it to create the concrete classes
+Its no longer dependent on itself for object creation
+/**
+ * Factory creates operations based on Activity level
+ * Hides construction complexity
+ */
+class DoubleOperationFactory {
+    private static final double DEFAULT_THRESHOLD = 42.0d;
+    
+    public static DoubleOperation createAbsolute() {
+        System.out.println("Factory: Creating AbsoluteOperation");
+        return new AbsoluteOperation(DEFAULT_THRESHOLD);
+    }
+    
+    public static DoubleOperation createAbsolute(double threshold) {
+        System.out.println("Factory: Creating AbsoluteOperation with threshold " + threshold);
+        return new AbsoluteOperation(threshold);
+    }
+    
+    public static DoubleOperation createAbsoluteLog(Activity activity) {
+        System.out.println("Factory: Creating AbsoluteLogOperation for " + activity);
+        return new AbsoluteLogOperation(DEFAULT_THRESHOLD, activity.level());
+    }
+    
+    public static DoubleOperation createAbsoluteReverse() {
+        System.out.println("Factory: Creating AbsoluteReverseOperation");
+        return new AbsoluteReverseOperation(DEFAULT_THRESHOLD);
+    }
+    
+    public static DoubleOperation createAbsoluteLogBitFlip(Activity activity) {
+        System.out.println("Factory: Creating AbsoluteLogBitFlipOperation for " + activity);
+        return new AbsoluteLogBitFlipOperation(DEFAULT_THRESHOLD, activity.level());
+    }
+    
+    // Smart factory method that chooses based on activity
+    public static DoubleOperation createForActivity(Activity activity) {
+        System.out.println("Factory: Creating operation for activity " + activity);
+        
+        return switch (activity) {
+            case NONE, LOW -> createAbsolute();
+            case MEDIUM, ELEVATED -> createAbsoluteLog(activity);
+            case HIGH, VERY_HIGH -> createAbsoluteLogBitFlip(activity);
+        };
+    }
+}
+
+Finally we have a singleton pattern in the main runner class to make things easier for access/management
+We also change things to actually call the factory & use the correct methods
+
+ * Refactored DoubleOps as Singleton
+ * Uses Dependency Injection and Strategy Pattern
+ 
+We make a map for the operations for this reason:
+We can easily map the operation to the enum type
+class to use - linked to - enum type : makes things easier
+
+We use the constructor to initialise the hashmap
+Then we use the same getInstance method to get an instance of this class
+
+We then have a method to set up the operation we want to use - it puts it in the map
+
+We then have the process method use the entered enum value and the specific class we want to use 
+We then use that specific operations process method
+
+Furthermore we have a method down the bottom for using the specific
+class DoubleOps {
+    private static DoubleOps instance;
+    private Map<Activity, DoubleOperation> operationRegistry;
+    
+    // Private constructor for Singleton
+    private DoubleOps() {
+        this.operationRegistry = new HashMap<>();
+        System.out.println("DoubleOps: Singleton instance created");
+    }
+    
+    public static synchronized DoubleOps getInstance() {
+        if (instance == null) {
+            instance = new DoubleOps();
+        }
+        return instance;
+    }
+    
+    /**
+     * Register an operation for an activity level
+     * This is DEPENDENCY INJECTION
+     */
+    public void registerOperation(Activity activity, DoubleOperation operation) {
+        System.out.println("DoubleOps: Registering operation for " + activity);
+        operationRegistry.put(activity, operation);
+    }
+    
+    /**
+     * Process a value using the operation registered for this activity
+     * REPLACES all the getAbsoluteXXX methods with ONE method!
+     */
+    public double process(Activity activity, double value) {
+        System.out.println("DoubleOps: Processing value " + value + " for " + activity);
+        
+        DoubleOperation operation = operationRegistry.get(activity);
+        
+        if (operation == null) {
+            System.out.println("No operation registered for " + activity + ", using default");
+            return value;
+        }
+        
+        return operation.process(value);
+    }
+    
+    // Convenience method for simple absolute value
+    public double processAbsolute(double value) {
+        return DoubleOperationFactory.createAbsolute().process(value);
+    }
+}

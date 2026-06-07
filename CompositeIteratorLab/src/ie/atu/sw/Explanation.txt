@@ -1,0 +1,62 @@
+What do composite & iterator patterns do?
+Enable us to both create complex data structures and provide a simple unified way of sequentially traversing them
+
+Based around idea of "divide and conquer" - allows us to build trees - hierarchical data structures
+
+Allows objects and compositions to be treated the same uniformly
+
+HIS DEMO - SHEET ON MOODLE EXPLANATION
+In this class the client is dependent on an abstract class "Component"
+- Abstraction doesnt have to be an interface & often times it is a class
+
+Component defines a method which is inherited by its 2 sub types
+- Leaf is an abstract class as it inherits and implements its parents behaviour - terminal node in a tree
+- Composite - node is a subtype of component. But is a composite pattern because it has a "has-a" relationship with it's parent
+- I.e. it "is-a" subtype of component but it also "has-a" ... number of components - maintains a number of components 
+
+Composite pattern allows execution of similar operations over composite and similar leaf nodes
+
+Composite has-a and is-a component - recursive component
+
+Composite holds x number of its constituents and can iterate over them 
+Nodes in this pattern are cohesive in the sense that they're doing the same thing overall
+But initially what a composite node is doing is different from what a leaf node is
+
+To implement composite patterns we need a composite node - a container class
+- Uses a collection to store other nodes
+Both leaf nodes and composite nodes expose the same interface, allowing both classes to be treated uniformly
+
+GUI systems are key examples of composite patterns & have implemented them since the 1970s
+Window contains a frame with a set of controls
+Frame is a "composite" & also a component - can add other things to it, other buttons/controls
+Frame will have child nodes, with those nodes capable of having child nodes e.g. other options etc
+
+Cant add a subwindow inside it - wouldnt make sense
+Can add more options/buttons/components
+
+A composite pattern and THE composite pattern aren't to be confused 
+- A regular composite pattern is just multiple patterns mixed together
+
+The most famous composite pattern is the MVC (Model view controller)
+- Mix of strategy, observer and composite
+- Composite pattern is used to generate views
+
+ITERATOR - BEHAVIOURAL DESIGN PATTERN
+Goes hand in hand with composite
+
+Provides a way to access the elements of aggregate objects sequentially without exposing the internal data structure
+Iterator replaces responsibility for traversal - simplifies data structures interface
+Simplified singular way of doing this
+Iterator can iterate through a data structure without caring about internal workings etc
+
+We have an aggregate - collection of things
+Can be anything, sweet or simple
+Aggregate class is implemented by a concrete aggregator which implements it's iterator method
+This new class will create concrete iterators which implement the iterator interface
+
+Iterator interface defines methods for traversing over elements in a collection
+ConcreteAggregate e.g. TreeSet has a collection of objects and is responsible for instantiating concreteIterator that can iterate over its collection of objects
+Concrete iterator is responsible for managing the current position of the iterator
+Need to take care when iterating and removing when using an index structure - could spill out over the edge
+
+Can be identified in the wild by returning iterator type - how its implemented is neither here nor there

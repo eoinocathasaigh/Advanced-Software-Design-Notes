@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="C:/Users/LENOVO/OneDrive - Atlantic TU/4th Year/SEM 1/Advanced Software Design/Labs/openjfx-25.0.1_windows-x64_bin-sdk/javafx-sdk-25.0.1/lib/javafx.base.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/LENOVO/OneDrive - Atlantic TU/4th Year/SEM 1/Advanced Software Design/Labs/openjfx-25.0.1_windows-x64_bin-sdk/javafx-sdk-25.0.1/lib/javafx.controls.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/LENOVO/OneDrive - Atlantic TU/4th Year/SEM 1/Advanced Software Design/Labs/openjfx-25.0.1_windows-x64_bin-sdk/javafx-sdk-25.0.1/lib/javafx.graphics.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

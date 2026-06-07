@@ -1,0 +1,10 @@
+Lab 2 Composition & Reuse Notes
+
+Whole point of this lab is to deploy composition to reuse some of the crypto capabilities in the java crypto library
+We refactor the work we do to make a nicely loosely coupled design with factory & singleton patterns too
+
+Most of the lab is normal, and explanations for most of the code are in the actual code itself
+When we are abstracting the cypher behaviour into its own super class we need to consider what is actually needed
+Do all cyphers need an instance or just need the Cypher variable? - yes so we include that
+- Do we need keyRing? No, key ring implies too so it would only work for asymmetric
+- Do we want encrypt & decrypt - yes so its included

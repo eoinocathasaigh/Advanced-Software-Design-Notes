@@ -1,0 +1,36 @@
+Lab 1 Notes in class
+
+Cyphers
+- Classical: very old and widely used, things like ceasar cyphers
+- Electro Mechanical - enigma & turing machines
+  - Enigma done using Lorenz cypher
+- Digital: modern ways of doing things
+
+Today
+Async Cyphering/Encryption
+- 2 keys: public & private key and you need them both to decrypt
+
+(Diffie Helman - sending encrypted thing back and forth and each receiver locks/unlocks it)
+
+Modern Day Encryption
+- RSA - public & private Key
+- E.C
+
+Both of these can only encrypt between 1024 - 2004 bits of information
+
+Synchronous 
+- Same Key
+
+E.G.
+- DES - 48 bit encryption
+- Triple - 128 bit
+- AES (Advanced Encryption Standard) - 128/256 - 2^128 bits of encryption
+  - We ship the key with the "box" using public key encryption
+
+Any unbreakable cypher from math?
+Yes there is
+
+(VERNAM CYPHER) 1 time Pad
+
+Involves taking a key and using XOR to encrypt (XOR is the ^ symbol in java), its virtually unbreakable as there's no loop - just don't repeat the key as that will give you away
+

@@ -1,0 +1,83 @@
+This lab deals with the proxie design pattern and the Java Remote method invoation framework
+
+Proxies play a huge role in distributed computing frameworks
+- includes unicode-centric technologies like REST services where we effectively pass text like JSON/XML
+- Could be binary based over a web service
+
+These are all pretty much language agnostic meaning it doesnt matter what you're programming in you can create distributed applications which can inter-operate together
+
+Marshaling of service calls is done by unicode/binary marshaling formats - Hessian/thrift
+
+Also need interface descriptions for Hessian/thrift - this is absent from REST
+
+In this lab we use Java RMI (Java Remote Method Invocation) - homogeneous (Java Centric Only)
+- Aim is to show how proxies can work in distributed computing also how simple/powerful it can be
+
+For this lab we have something like this:
+1 side with a service requester/client making a call on a remote object on a different machine in a heap
+- difference in location could be anywhere, on same machine or separate (over a network)
+- Client makes a request on what it thinks is a remote object - but it wont be what it thinks it is
+- Instead its a stub - Dynamic remote proxy that marshals the client request over the network into the target virtual machine where its routed through the skeleton after being unmarshaled 
+- Marshaling here is in java serialization form - dont have to use unicode or binary or text based communication since its java-to-java - its a lot easier
+- Skeleton is in the same address space as our target invocation so the call is delegated to the actual target
+- We call the method, get a response, marshal it and send it back to the original stack
+- Return type is a message, and we'll change it from a pass by type to a pass by reference - this means return type is a remote object thats also pointing at a object thats living in the virtual machine of the java service provider
+
+This will also demonstrate remote method invocation - demonstrates how we can do all of the same stuff with proxies hiding complicated stuff from us 
+Also demonstrates location transparency - dont care where it resides
+
+
+MESSAGE CLIENT SIDE
+Message - POJO, returned from our remote method invocation - serializable
+MessageService - remote service we're exposing - remotely invokable
+MessageServiceImpl - remote object/service provider, this is the actual target of our invocations, its a proxy called a stub
+MessageServer - servant class responsible for creating an instance of remote object and binding it to a human readable name
+MessageClient - Client/service requester, the consumer of the remote object
+
+Why do we mark message as serializable? - its marshaling form here is bog standard serialisation 
+- if we're using xml or json etc
+
+MessageService - declares a method which returns type Message, entirely declarative
+
+ServiceImpl - implements message service and extends UnicastRemoteObject which allows us to strap the rmi remote object into the framework
+
+MessageServer - this basically sets everything up, creates a new Message object, instantiate the MessageServiceImpl and pass the message, then start up the registry
+- Registry is like a map, relating names to objects
+- We then bind the remote object to the registry with a human readable name
+
+MessageClient - We get a handle on the message service then call the "REMOTE METHOD INVOCATION" (GetMessage) which returns to us a serialized pass by value
+
+IN PART 1
+We simply get the message as a serializable object 
+We call the remote method and get a copy of what is in the remote server
+
+In PART 2 - We'll configure things so that we get an actual remote reference to the message on the server - equivalent to the pass by reference
+
+To start we extract an interface from the POJO Message - RemoteMessage - make sure the change is cascaded throughout the app
+
+We have the remote interface but nothing that implements it - so we make a new class called "RemoteMessageImpl"
+
+
+RPC - Remote Procedure Call
+- Language neutral (covers everything)
+
+Client in VM 1 sends request or whatever over the cloud to VM 2
+- Client is attached to Stub/Proxy in VM1
+
+Skeleton exists in VM 2 which maintains things like port number
+
+If we want to pass something like a list as a parameter it's simple - we need to just make sure the records implement serializable
+- i.e. interface type "ninja" implements serializable then we have a list of ninjas
+
+We can get a reference to things like a list instead of being given the list itself - it could be massive
+
+Lets also say we have a method in the remote interface which has a remoteException
+We return the reference to the remote object by value
+We essentially get an initialised stub returned to us
+
+Who is the requester and who is the provider is a difference of who is working
+
+Under the hood the skeletons and stubs are being generated on the fly - hence "Dynamic"
+
+Skeleton is "listening" on server side
+Stubs are on client side and handle the remote stuff - client just thinks things are handling locally

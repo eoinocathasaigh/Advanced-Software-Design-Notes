@@ -1,0 +1,50 @@
+MVC - Separation of concerns between 3 core components of a framework (Coarse grained instance of Single Responsibility Principle)
+
+Model - Represents knowledge and may manifest as single object or complex aggregation of objects
+View - Visualisation of all or part of model -> intended for human consumption and interaction, highlighting or hiding certain attributes of the model - tree -> hiearchial view
+Controller - Intermediary between user of system and model. Receives requests from CRUD operations and sends them to model
+
+We see the combination of patterns here:
+Composite - Used to create the view -> tree like structure with hierarchial structure
+Observer - Model handling/managing views being planted 
+Strategy - configuring context, either an object model or with a view
+
+Initially when we boot up this lab it will create a simple gui which allows us to add and remove characters from a model
+
+All GUI are tree's - tree like structure
+Effectively declaring/using classes and wiring them up to actions in code behind
+
+With a lot of the java gui stuff we're planing listeners - this is the observer pattern as we are literally observing something
+Listeners are all observers
+
+e.g. Graphics context in java
+
+Swing is guaranteed to work out of the box
+Javafx needs some changes before it can be run - also if you run it across different platforms then you need all those different fx types
+- e.g. windows, android, mac
+
+Flyweight Pattern
+Different things but all apart of the same thing
+e.g. tree in game development
+	- main class for tree that can do oak leaf perfectly
+	- Pass in 10k data states/stuff you want it to deal with 
+	- We have 10k different types of trees for every state
+
+Flyweight - sharing -> sharing stuff to make things easier
+
+How would we add a button like a star in "swing"
+- Think about how we could simply override component or jcomponent and add in the functionality you want
+
+MVC
+Separation of concerns - handling different things
+View is handling representing the data and events/listeners
+It communicates with Controller 
+Controller communicates with Model as a web exe file or something like that
+Checks to see if things are safe/okay based on actions from users in view
+Model is then how the data is stored/what it is
+
+Involves looser coupling
+
+Where could we put a flyweight in this lab?
+When painting things we could have one object responsible for painting and share the objects/states 
+Helps us recycle the object and cut down on reusing code

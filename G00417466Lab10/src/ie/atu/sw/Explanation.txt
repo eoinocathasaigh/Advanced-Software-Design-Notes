@@ -1,0 +1,39 @@
+This lab seeks to look at each of the files 
+Using streams API to see how it solves issues with querying databases 
+
+ULTIMATELY WHAT THIS LAB DOES IS ABSTRACT HOW WE ACCESS DB DATA THROUGH STREAMS AND OTHER METHODS
+
+80% of data is stored in relational dbs
+
+Today we see a divide between 2 db designs 
+- Relational Database: one using Object relational mapping for the object graph to store it in a db: this one can relate things normally across tables using foreign keys but not a whole lot more object mapping besides
+- Object Database: The other one uses a cache to store the object graph as it is in the relational db
+
+The first way suffers from an Impedance Mismatch
+The second doesnt
+
+Most of the time we use the object relational mapping though since most of the time most of the info needs to be transacted 
+- For doing this its very hard to get away from a relational database
+
+NoSQL is another approach to solve some problems - 
+
+One Common problem is the AD-HOC QUERY FACILITIES:
+- Basically how do we query any database from a programming language
+
+For this lab we import and use the microstream-one database and add it to the Build path
+
+In the main runner we create an instance of the graph with the customers
+We then simply store this root with all the dependencies in the db - its just stored as is
+
+We are using the .stream() api for simplicity
+Also use things like a comparator to do comparison queries
+
+For showing a list of results we add things to a map, then use other methods like distinct() and .collect() specifying what specific information we want collected and in what form
+Similar sort of operation is done when looking for customers and their orders
+
+We can also perform sub queries with maps and complicated looking statements within the main query
+
+Update()
+Simple enough and similar to what we saw in create earlier
+
+Design approach for abstracting the suite of queries in the OODB as a db class that encapsulates complexity of stream queries and the implementation details of the database itself

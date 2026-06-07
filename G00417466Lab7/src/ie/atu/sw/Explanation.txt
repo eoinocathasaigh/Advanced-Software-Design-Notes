@@ -1,0 +1,149 @@
+This lab really deals with generic types
+Specifically generics and parametric polymorphism
+
+Parametric programming is a relatively new paradigm like oop etc
+Idea is to increase expressiveness of a programming language
+- by allowing types to be abstracted and formalised as concepts without sacrificing static type safety
+
+Enables methods of data structures to be parameterised directly - handle values homogenously without relying on a concrete type
+
+Generics effectively gives us a 3rd way of dealing with things/ compose behaviour - inheritance, composition, generics
+We dont specify type - we define a type without specifying all other types it uses
+
+Generics dont exist at runtime, compiler actively replaces them with class names, casts at runtime
+Type erasure at runtime ensures hard wired types are used - ensures type safety
+Compiler does a lot of work ensuring generics are turned into objects
+
+Distinguished with
+<T>
+
+Raw type is a generic class or interface thats used without a type parameter - effectively creates a type <Object> 
+- results in an "unchecked conversion"
+
+Generics and LSP
+Variance - refers to substitutability of something
+
+Arrays in java are covariant meaning that the inheritance relationship between scalar types is maintained in array types
+
+i.e. Integer IS-A Number, therefore Integer Array IS-A Number array
+Derived types can be swapped in for the base types without any noticeable difference in behaviour
+Parameter types can be upcast - from more specific to more general
+
+However measure can lead to problems like Heap Pollution
+- when variable of a parameterised type refers to an object that is not of that parameterised type
+
+These 2 lines will be fine
+Integer[] integers = new Integer[10];
+Number[] numbers = integers;
+This will cause an error
+numbers[0] = Double.valueOf(3.14d);
+Why? - we cant upcast 
+
+Covariance and Consumer (Read-Only)
+Covariance will not hold up between collections
+List of numbers isnt the same as a list of integers
+This implies that unlike arrays collections are not covariant
+Even though an Integer IS-A Number, an Integer
+Collection IS-NOT-A Number Collection
+
+List<Integer> integers = new ArrayList<>();
+List<Number> numbers = integers;
+
+Wildcard can help us to declare unbounded types
+Only useful if the method can be implemented with only the behaviours of Object
+
+public void execute(List<?> s) {
+	for (Object o : s) {
+	//Can only process the list as a collection of Object types
+ 	}
+ 	length += s.size(); //This does not depend on the type parameter
+}
+
+Used like Class<?>
+
+We can relax the constraints of the wildcard by using the extends keyword
+Helps to relax constrictions of a type
+
+public double product(List<? extends Number> s) {
+ 	double result = 0.00d;
+ 	for (Number n : s) { //Only methods defined in Number can be used
+ 		result *= n.doubleValue(); //A consumer only
+ 	}
+ 	return result;
+}
+
+The type parameter List<? extends Number> enables us to call the method using instances of
+Number or any of it subtypes, i.e. List<Byte>, List<Short>, List<Integer>, List<Float> and
+List<Double> will all work. This is not the same as declaring the parameter as List<Number>
+which is not covariant with List<Integer> etc. However, an upper-bounded wildcard can only
+manipulate the list as a list of Number types. Note that the extends keyword in a generic context
+includes both specialisation and specification inheritance, i.e. extends and implements. An
+upper bounded wildcard is covariant and upholds the LSP.
+
+Extends refers to both specialisation and specification inheritance
+
+You can only read from these structures, not write anything to them - helps prevent heap
+
+Contravariance and Producer(Write Only)
+This method uses the super keyword
+public void populate(List<? super Double> s) {
+ 	for (int i = 0; i < 100; i++) { //Any methods in Double or above can be used
+ 		s.add(Double.valueOf(new Random().nextDouble())); //A producer only
+ 	}
+}
+
+The type parameter List<? super Double> enables us to call the method using instances of
+elements that are a super-type of Double. This includes List<Double, List<Number> and even
+a List<Object>, but not a List<Integer>.
+
+Why cant we read? because whatever type we're using it could be that or greater so we dont know what we're reading
+e.g. it could be double or greater
+We could get a class cast exception
+
+These various types can be only a producer or a consumer - not both at the same time
+And should avoid using them in return types
+
+
+Limitations of Parametric Polymorphism
+Type parameters cant be directly instantiated 	
+
+This will throw errors with the constructor for T, compiler cant be sure
+Cant create a new instance of a generic type
+class Gen<T>{
+ private T value;
+
+ public Gen(){
+ value = new T(); //Compiler error
+ }
+}
+
+Static keyword cant be used here as it refers to the class Gen
+class Gen<T>{
+ private static T value; //Compiler error
+
+ public static T getValue(){
+ return value; //Compiler error
+ }
+}
+
+Can do things like creating a generic array but cant instantiate it
+Why? Because the compiler has no idea what it could be - like saying "process this/compile this - but it could be of any type"
+e.g. T[] collection = new T[10];
+There are a few work arounds for this though
+1. assign a refference to an existing array
+2. Create an array with an unbounded wildcard instantiation <?>
+3. assign a new raw array
+
+class Gen<T>{
+ private T[] collection;
+
+ public Gen(T[] stuff){
+ collection = stuff; //1) Assign a reference to an existing array
+ }
+}
+Gen<?>[] col = new Gen<?>[10]; //2) Unbounded wildcard. Creates Gen<Object>[]
+@SuppressWarnings("unchecked") //3) This approach generates a compiler warning
+Gen<Integer>[] numbers = new Gen[10]; //A raw type is assigned to a generic type
+
+
+Simplifying the Visitor pattern using parametric polymorphism

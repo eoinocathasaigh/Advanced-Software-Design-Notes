@@ -1,0 +1,32 @@
+DATA ORIENTED PROGRAMMING
+All about separating data from its processing
+
+4 CORE PRINCIPLES 
+
+1. Model the Data and Only the Data: Use read-only Java records for data and sealed types for choices. Limit behaviour using stateless methods.
+2. Make the Data Immutable: Use read-only data types like records and enums.
+3. Validate Data at the Boundary: Reject invalid data inside record constructors or in receiving code.
+4. Make Illegal States Unrepresentable: Create a record or read-only data structure for every possible state
+
+To achieve this we will be using things like records(Product Type), Enum or Sealed Type Hierarchy(Sum Type) 
+
+Processing will be done by static methods with pattern matching (switch statements)
+
+For each one of the "entities" in this program we make a record
+
+In problems like these we will be given a set of "rules" which are in effect conditions the files must follow
+e.g. something not being able to be negative 
+- we must configure things correctly
+
+To implement these things we need to implement/use a sealed type -i.e. a interface "Operation"
+What ticket operation does is define a set of records to be passed to methods to perform some sort of behaviour
+
+Not the solution to every problem 
+Records were apart of the JEP - Java Enhancement Proposal - 395
+- 432, 441 regard record pattern matching
+
+Records are just carriers of data - read-only meaning its immutable 
+- makes things much much easier
+
+Switching also makes things easier here
+- easier than if statements as we can clearly see things, read them, and spot if something is missing

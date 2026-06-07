@@ -1,0 +1,18 @@
+Lab 1 - Refactoring through abstraction & Encapsulation -> using cyphers
+
+What is this lab about - primarily about examining code & refactoring it to make it simpler & more in line with our SRP of Solid principles
+
+i.e. taking out or extracting behaviour properly from classes to be reused by multiple other classes & simplifying how that behaviour is used
+
+Refactoring - changing the structure of the code without changing behaviour
+
+ABSTRACTION
+Primarily involves abstracting out the common behaviour in a group of entities into a reusable abstract representation
+Must be minimalist and have behaviours that are universally common - like identical details, meant to encourage the inheritance of functionality.
+Few different types of abstraction
+
+Role Abstraction - object behaviour is completely separated from the state in an abstract type i.e. an interface - meant to define a role that different objects can play in different contexts/situations/classes
+
+Hierarchal Abstraction - base class of a hierarchy contains some implemented state and behaviour, mixed with some abstract methods i.e. an abstract class
+
+What would be the best way for us to hide the key? - Hide it in plain sight i.e. a text file, it's all stored as bytes so it makes no difference
